@@ -10,6 +10,17 @@ import { CreativeBriefForm, validateCreativeBrief } from './CreativeBriefForm';
 import { FileUploadForm } from './FileUploadForm';
 import { ReviewStep } from './ReviewStep';
 
+export interface FileData {
+    id: string;
+    name: string;
+    size: number;
+    type: string;
+    preview?: string;
+    file?: File;
+    path?: string;
+    url?: string;
+}
+
 export interface OnboardingData {
     clientInfo: {
         firstName: string;
@@ -41,46 +52,10 @@ export interface OnboardingData {
         hasBrandGuidelines: boolean;
         hasExistingAssets: boolean;
         additionalNotes: string;
-        logoFiles: Array<{
-            id: string;
-            name: string;
-            size: number;
-            type: string;
-            preview?: string;
-            file?: File;
-            path?: string;
-            url?: string;
-        }>;
-        guidelineFiles: Array<{
-            id: string;
-            name: string;
-            size: number;
-            type: string;
-            preview?: string;
-            file?: File;
-            path?: string;
-            url?: string;
-        }>;
-        marketingFiles: Array<{
-            id: string;
-            name: string;
-            size: number;
-            type: string;
-            preview?: string;
-            file?: File;
-            path?: string;
-            url?: string;
-        }>;
-        inspirationFiles: Array<{
-            id: string;
-            name: string;
-            size: number;
-            type: string;
-            preview?: string;
-            file?: File;
-            path?: string;
-            url?: string;
-        }>;
+        logoFiles: FileData[];
+        guidelineFiles: FileData[];
+        marketingFiles: FileData[];
+        inspirationFiles: FileData[];
     };
 }
 
@@ -138,7 +113,7 @@ export function OnboardingWizard() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const updateData = (section: keyof OnboardingData, newData: any) => {
+    const updateData = <K extends keyof OnboardingData>(section: K, newData: Partial<OnboardingData[K]>) => {
         setData((prev: OnboardingData) => ({
             ...prev,
             [section]: { ...prev[section], ...newData }
@@ -189,7 +164,7 @@ export function OnboardingWizard() {
             const fileCategories: (keyof typeof uploadedAssets)[] = ['logoFiles', 'guidelineFiles', 'marketingFiles', 'inspirationFiles'];
 
             for (const category of fileCategories) {
-                const files = uploadedAssets[category] as any[];
+                const files = uploadedAssets[category] as FileData[];
                 if (Array.isArray(files)) {
                     const updatedFiles = await Promise.all(files.map(async (fileData) => {
                         if (fileData.file) {
@@ -205,6 +180,7 @@ export function OnboardingWizard() {
                         }
                         return fileData;
                     }));
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (uploadedAssets as any)[category] = updatedFiles;
                 }
             }

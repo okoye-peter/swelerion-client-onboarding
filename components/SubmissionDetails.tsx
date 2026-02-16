@@ -101,7 +101,7 @@ export function SubmissionDetails() {
         return <Badge variant={variant}>{label}</Badge>;
     };
 
-    const InfoRow = ({ icon: Icon, label, value }: { icon: any; label: string; value: string | undefined | null }) => (
+    const InfoRow = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string | undefined | null }) => (
         <div className="flex items-start gap-3 py-3 border-b last:border-0">
             <Icon className="w-5 h-5 mt-0.5 text-muted-foreground shrink-0" />
             <div className="flex-1 min-w-0">
@@ -365,7 +365,7 @@ export function SubmissionDetails() {
                                         </p>
                                         {category.files.length > 0 ? (
                                             <div className="space-y-2">
-                                                {category.files.map((file: any) => (
+                                                {category.files.map((file: { id: string; name: string; url?: string }) => (
                                                     <div
                                                         key={file.id}
                                                         className="flex items-center justify-between p-2 rounded-md bg-muted"

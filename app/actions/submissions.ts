@@ -1,9 +1,9 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+
 import { OnboardingData } from "@/components/OnboardingWizard";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
 
 export async function createSubmission(data: OnboardingData) {
     try {
@@ -110,6 +110,7 @@ export async function getSubmissions(page = 1, perPage = 10, search = "") {
     ]);
 
     return {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data: submissions.map((s: any) => ({
             ...s,
             submittedAt: s.createdAt.toISOString(),
@@ -163,6 +164,7 @@ export async function updateSubmission(
     data: Partial<OnboardingData> & { status?: string },
 ) {
     try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updateData: any = {
             updatedAt: new Date(),
         };
