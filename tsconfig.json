@@ -35,9 +35,6 @@
         ".next/types/**/*.ts"
     ],
     "exclude": [
-        "node_modules",
-        "_src_legacy",
-        "vite.config.ts",
-        "_src_legacy_vite"
+        "node_modules"
     ]
 }
