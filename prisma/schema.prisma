@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Submission {
+    id        String   @id @default(uuid())
+    status    String   @default("new") // new, in-progress, completed
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Relationships
+    clientInfo     ClientInfo?
+    projectDetails ProjectDetails?
+    creativeBrief  CreativeBrief?
+    assets         Assets?
+}
+
+model ClientInfo {
+    id           String     @id @default(uuid())
+    submissionId String     @unique
+    submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+    firstName String
+    lastName  String
+    email     String
+    phone     String?
+    company   String
+    website   String?
+    role      String
+}
+
+model ProjectDetails {
+    id           String     @id @default(uuid())
+    submissionId String     @unique
+    submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+    projectName  String
+    projectType  String
+    timeline     String
+    budget       String
+    startDate    String
+    deliverables String // JSON string of deliverables array
+}
+
+model CreativeBrief {
+    id           String     @id @default(uuid())
+    submissionId String     @unique
+    submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+    goals          String
+    targetAudience String
+    style          String
+    inspiration    String
+    mustHaves      String
+    mustNotHaves   String
+}
+
+model Assets {
+    id           String     @id @default(uuid())
+    submissionId String     @unique
+    submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+    hasLogo            Boolean @default(false)
+    hasBrandGuidelines Boolean @default(false)
+    hasExistingAssets  Boolean @default(false)
+    additionalNotes    String?
+
+    // File metadata stored as JSON strings
+    logoFiles        String @default("[]")
+    guidelineFiles   String @default("[]")
+    marketingFiles   String @default("[]")
+    inspirationFiles String @default("[]")
+}
